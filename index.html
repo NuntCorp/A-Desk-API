@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+    </head>
+    <body>
+    </body>
+    <script>
+        var body = document.getElementsByTagName("body")[0]
+        var params = {}
+        var selected = false
+        var database_url = "https://raw.githubusercontent.com/NuntCorp/A-Desk-API/main/data.json"
+        fetch(database_url)
+        .then((resp) => resp.json())
+        .then(function(data) {
+            var database = data
+            var found = []
+            for (var prop in location) {
+                if (selected === true) {
+                    params[prop] = location[prop]
+                }
+            }
+            if (location.search) {
+                var querystring = location.search.substring(1)
+                var splits = querystring.split("&")
+                for (var i = 0; i < splits.length; i++) {
+                    var splitpair = splits[i].split("=")
+                    if (splitpair[1] !== undefined) {
+                        params[splitpair[0]] = splitpair[1]
+                    }
+                }
+            }
+            var query = params["q"].split("%20")
+
+            for (a in query) {
+                var a = query[a]
+                for (i in database) {
+                    var i = database[i]
+                    var title = i[0]
+                    var url = i[1]
+                    var description = i[2]
+                    if (title.toLowerCase().includes(a.toLowerCase())) {
+                        var format = {
+                            "title": title,
+                            "url": url,
+                            "description": description
+                        }
+                        found.push(format)
+                    }
+                }
+            }
+
+            body.style.fontFamily = "monospace"
+            body.textContent = JSON.stringify(found)
+        })
+    </script>
+</html>
